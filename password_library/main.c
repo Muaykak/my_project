@@ -5,17 +5,10 @@
 void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
 
-int main()
+int	main(void)
 {
-    int s = 13;
-    int x;
-    while (s--) {
-        x = getchar();
-        putchar(x);
-    }
-    return 0;
+	ft_putstr("")	
 }
-
 void	ft_putstr(char *str)
 {
 	int	i;
