@@ -28,10 +28,7 @@ int	main(int ac, char **av)
 	}
 	if (ac == 2)
 	{
-		dup = malloc_dup_lowercase(av[1]);
-		ft_putstr(dup);
-		ft_putstr("\n");
-		free(dup);
+		find_data(av[1]);
 	}
 
 }
