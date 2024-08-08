@@ -16,7 +16,10 @@ int		check_input_format(char *str);
 int		check_all_input_format(int ac, char **av);
 int		ft_strlen(char *str);
 char	*malloc_dup_lowercase(char *str);
-int	ft_strcmp(char *s1, char *s2);
+int		ft_strcmp(char *s1, char *s2);
+int		check_strstr(char *str, char *to_find);
+int		check_related(char *str, char *to_find);
+int		print_data(int linenum);
 
 /*
 int	main(int ac, char **av)
@@ -36,13 +39,95 @@ int	main(int ac, char **av)
 }
 */
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	int	j;
 
-	j = ft_strcmp("Hello", "Hello");
-	ft_putnbr(j);
-	ft_putstr("\n");
+	if (argc == 3)
+	{
+		j = check_related(argv[1], argv[2]);
+		ft_putnbr(j);
+		ft_putstr("\n");
+	}
+	if (argc == 2)
+	{
+		print_data(atoi(argv[1]));
+	}
+}
+
+//print the set of desired data
+int	print_data(int linenum)
+{
+	char	*temp;
+	int		i;
+
+	temp = malloc_get_line(linenum);
+	if (temp == NULL)
+		return (0);
+	i = 0;
+	while (temp[0] != '\0')
+	{
+		ft_putstr(temp);
+		ft_putstr("\n");
+		i++;
+		free(temp);
+		temp = malloc_get_line(linenum + i);
+		if (temp == NULL)
+			return (0);
+	}
+	return (1);
+}
+
+/*
+//this function will find the line that has matching name then return that line number
+int	find_strcmp(char *str)
+{
+	int	line_num;
+
+	line_num = 1;
+}
+*/
+
+//use strstr to find related names or other data by convert both string and to_find to lowercase
+//alphabet
+int	check_related(char *str, char *to_find)
+{
+	char	*str_temp;
+	char	*tofind_temp;
+	int		j;
+
+	if (str == NULL || to_find == NULL)
+		return (0);
+	str_temp = malloc_dup_lowercase(str);
+	tofind_temp = malloc_dup_lowercase(to_find);
+	j = check_strstr(str_temp, tofind_temp);
+	free(str_temp);
+	free(tofind_temp);
+	return (j);
+}
+
+int	check_strstr(char *str, char *to_find)
+{
+	int	index[4];
+
+	if (str == NULL || to_find == NULL)
+		return (0);
+	if (to_find[0] == '\0')
+		return (1);
+	index[0] = 0;
+	while (str[index[0]] != '\0')
+	{
+		index[1] = 0;
+		if (str[index[0]] == to_find[index[1]])
+		{
+			while (str[index[0] + index[1]] == to_find[index[1]] && to_find[index[1]])
+				index[1]++;
+			if (to_find[index[1]] == '\0')
+				return (1);
+		}
+		index[0]++;
+	}
+	return (0);
 }
 
 int	ft_strcmp(char *s1, char *s2)
