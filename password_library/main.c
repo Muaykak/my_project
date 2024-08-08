@@ -16,7 +16,9 @@ int		check_input_format(char *str);
 int		check_all_input_format(int ac, char **av);
 int		ft_strlen(char *str);
 char	*malloc_dup_lowercase(char *str);
+int	ft_strcmp(char *s1, char *s2);
 
+/*
 int	main(int ac, char **av)
 {
 	char	*dup;
@@ -31,6 +33,30 @@ int	main(int ac, char **av)
 		find_data(av[1]);
 	}
 
+}
+*/
+
+int	main(void)
+{
+	int	j;
+
+	j = ft_strcmp("Hello", "Hello");
+	ft_putnbr(j);
+	ft_putstr("\n");
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] != '\0')
+	{
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (s1[i] - s2[i]);
 }
 
 //chage the given string into lowercase and put it into malloc()
