@@ -4,7 +4,7 @@
 #include <fcntl.h>
 
 #define PASS_FILE "test.txt"
-#define BUFF_SIZE 1024
+#define BUFF_SIZE 1
 
 void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
@@ -22,6 +22,7 @@ int		check_strstr(char *str, char *to_find);
 int		check_related(char *str, char *to_find);
 int		print_data(int linenum);
 ssize_t			file_count(void);
+int		ft_abs(int nbr);
 
 /*
 int	main(int ac, char **av)
@@ -51,36 +52,21 @@ int	main(void)
 
 }
 
-/*
-int	ft_add_write(char *str, int cursor)
+int	add_front_space(int space)
 {
-	int		fd;
-	int		i;
-	char	c;
+	int	file_length;
 
-	i = 0;
-	fd = open(PASS_FILE, O_RDWR);
-	while (i < cursor)
-	{
-		if (read(fd, &c, 1) == 0)
-			return (0);
-		i++;
-	}
+	file_length = file_count();
+
 }
 
-int	ft_add_space(int cursor, int space)
+int	ft_abs(int nbr)
 {
-	int	fd;
-
-	if (space <= 0)
-		return (0);
-	if (cursor == -1)
-		fd = open(PASS_FILE, O_RDWR | O_APPEND);
+	if (nbr < 0)
+		return (-1 * nbr);
 	else
-		fd = open(PASS_FILE, O_RDWR);
-	
+		return (nbr);
 }
-*/
 
 // count amount of characters of the file
 ssize_t	file_count(void)
