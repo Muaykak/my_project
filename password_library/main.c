@@ -9,7 +9,7 @@ void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
 int		line_strcount(int line_num);
 char	*malloc_get_line(int line_num);
-int		open_line(int line_num);
+int		open_line(int line_num, int *fd);
 int		check_printable(char *str);
 int		check_argv_printable(int ac, char **av);
 int		check_input_format(char *str);
@@ -78,6 +78,15 @@ int	print_data(int linenum)
 	return (1);
 }
 
+// separate string from malloc_get_line
+int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
+{
+	if (check_input_format(malloc_get) == 1)
+	{
+		
+	}
+}
+
 /*
 //this function will find the line that has matching name then return that line number
 int	find_strcmp(char *str)
@@ -87,6 +96,7 @@ int	find_strcmp(char *str)
 	line_num = 1;
 }
 */
+
 
 //use strstr to find related names or other data by convert both string and to_find to lowercase
 //alphabet
@@ -265,44 +275,51 @@ int	check_printable(char *str)
 // to count the string size of that line in the file
 int	line_strcount(int line_num)
 {
-	int		fd;
+	int		fd[1];
 	int		k;
 	char	c;
 
-	fd = open_line(line_num);
-	if (fd == -1)
+	open_line(line_num, fd);
+	if (fd[0] == -1)
 		return (-1);
 	k = 0;
-	while (read(fd, &c, 1) != 0 && c != '\n')
+	while (read(fd[0], &c, 1) != 0 && c != '\n')
 		k++;
-	close(fd);
+	close(fd[0]);
 	return (k);
 }
 
 // open file then go to that line num   
-// IF SUCCESS RETURN fd  IF FAIL RETURN -1
-int	open_line(int line_num)
+// IF SUCCESS RETURN the amount that read IF FAIL RETURN -1
+int	open_line(int line_num, int *fd)
 {
-	int		fd;
+	int		fd[1];
 	int		k;
+	int		count;
 	char	c;
 
 	line_num--;
 	if (line_num < 0)
+	{
+		fd[0] = -1;
 		return (-1);
-	fd = open(PASS_FILE, O_RDONLY);
+	}
+	fd[0] = open(PASS_FILE, O_RDONLY);
+	count = 0;
 	while (line_num > 0)
 	{
-		k = read(fd, &c, 1);
+		k = read(fd[0], &c, 1);
 		if (c == '\n')
 			line_num--;
 		if (k == 0)
 		{
-			close(fd);
+			close(fd[0]);
+			fd[0] = -1;
 			return (-1);
 		}
+		count++;
 	}
-	return (fd);
+	return (count);
 }
 
 // this  function is to malloc the str to get to 
@@ -310,7 +327,7 @@ int	open_line(int line_num)
 char	*malloc_get_line(int line_num)
 {
 	int		k;
-	int		fd;
+	int		fd[1];
 	int		i;
 	char	*str;
 
@@ -320,14 +337,13 @@ char	*malloc_get_line(int line_num)
 	str = (char *)malloc((k + 1) * sizeof(char));
 	if (str == NULL)
 		return (NULL);
-	fd = open_line(line_num);
+	open_line(line_num, fd);
 	i = 0;
-	while (read(fd, &str[i], 1) != 0 && str[i] != '\n')
+	while (read(fd[0], &str[i], 1) != 0 && str[i] != '\n')
 		i++;
 	str[i] = '\0';
 	return (&str[0]);
 }
-
 
 void	ft_putstr(char *str)
 {
