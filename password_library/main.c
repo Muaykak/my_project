@@ -55,9 +55,25 @@ int	main(void)
 int	add_front_space(int space)
 {
 	int	file_length;
+	char	*temp;
+	int	fd;
 
-	file_length = file_count();
-
+	file_length = file_count;
+	temp = (char *)malloc((BUFF_SIZE + 1) * sizeof(char));
+	if (temp == NULL)
+		return (0);
+	temp[BUFF_SIZE] = '\0';
+	fd = open(PASS_FILE, O_RDWR | O_APPEND);
+	write(fd, " ", space);
+	close(fd);
+	file_length -= BUFF_SIZE;
+	while (file_length > 0)
+	{
+		fd = open(PASS_FILE, O_RDWR);
+		read(fd, temp[0], (file_length - 1));
+		read(fd, temp, BUFF_SIZE);
+		file_length -= BUFF_SIZE;
+	}
 }
 
 int	ft_abs(int nbr)
@@ -208,6 +224,7 @@ char	*malloc_dup_lowercase(char *str)
 	temp[i] = '\0';
 	return (&temp[0]);
 }
+
 //count how many characters in the given string
 int	ft_strlen(char *str)
 {
@@ -220,6 +237,7 @@ int	ft_strlen(char *str)
 	}
 	return (i);
 }
+
 // to check when having more than 3 arguments
 // to formar shoult be "Name: something describe"
 // this function is to determine ":" and " " is there in the arguments
