@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-#define PASS_FILE "password.dict"
+#define PASS_FILE "test.txt"
+#define BUFF_SIZE 1024
 
 void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
@@ -20,6 +21,7 @@ int		ft_strcmp(char *s1, char *s2);
 int		check_strstr(char *str, char *to_find);
 int		check_related(char *str, char *to_find);
 int		print_data(int linenum);
+ssize_t			file_count(void);
 
 /*
 int	main(int ac, char **av)
@@ -39,20 +41,62 @@ int	main(int ac, char **av)
 }
 */
 
-int	main(int argc, char **argv)
+int	main(void)
 {
 	int	j;
 
-	if (argc == 3)
+	j = file_count();
+	ft_putnbr(j);
+	ft_putstr("\n");
+
+}
+
+/*
+int	ft_add_write(char *str, int cursor)
+{
+	int		fd;
+	int		i;
+	char	c;
+
+	i = 0;
+	fd = open(PASS_FILE, O_RDWR);
+	while (i < cursor)
 	{
-		j = check_related(argv[1], argv[2]);
-		ft_putnbr(j);
-		ft_putstr("\n");
+		if (read(fd, &c, 1) == 0)
+			return (0);
+		i++;
 	}
-	if (argc == 2)
+}
+
+int	ft_add_space(int cursor, int space)
+{
+	int	fd;
+
+	if (space <= 0)
+		return (0);
+	if (cursor == -1)
+		fd = open(PASS_FILE, O_RDWR | O_APPEND);
+	else
+		fd = open(PASS_FILE, O_RDWR);
+	
+}
+*/
+
+// count amount of characters of the file
+ssize_t	file_count(void)
+{
+	ssize_t			count;
+	int		fd;
+	char	c;
+
+	fd = open(PASS_FILE, O_RDONLY);
+	count = 0;
+	while (read(fd, &c, 1) != 0)
 	{
-		print_data(atoi(argv[1]));
+		count++;
 	}
+	close (fd);
+	return (count);
 }
 
 //print the set of desired data
@@ -78,6 +122,7 @@ int	print_data(int linenum)
 	return (1);
 }
 
+/*
 // separate string from malloc_get_line
 int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
 {
@@ -86,6 +131,7 @@ int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
 		
 	}
 }
+*/
 
 /*
 //this function will find the line that has matching name then return that line number
@@ -293,7 +339,6 @@ int	line_strcount(int line_num)
 // IF SUCCESS RETURN the amount that read IF FAIL RETURN -1
 int	open_line(int line_num, int *fd)
 {
-	int		fd[1];
 	int		k;
 	int		count;
 	char	c;
