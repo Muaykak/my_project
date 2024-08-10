@@ -4,7 +4,7 @@
 #include <fcntl.h>
 
 #define PASS_FILE "test.txt"
-#define BUFF_SIZE 1
+#define BUFF_SIZE 3
 
 void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
@@ -23,6 +23,7 @@ int		check_related(char *str, char *to_find);
 int		print_data(int linenum);
 ssize_t			file_count(void);
 int		ft_abs(int nbr);
+int		add_space(int space, int cursor);
 
 /*
 int	main(int ac, char **av)
@@ -46,34 +47,91 @@ int	main(void)
 {
 	int	j;
 
-	j = file_count();
-	ft_putnbr(j);
-	ft_putstr("\n");
-
+	j = add_space(1, 1);
+	if (j == 1)
+		ft_putstr("Successful\n");
 }
 
-int	add_front_space(int space)
+int	add_space(int space, int cursor)
 {
 	int	file_length;
 	char	*temp;
 	int	fd;
+	char	c;
+	int	i;
 
-	file_length = file_count;
+	file_length = file_count();
+	if (cursor < 0 || cursor > file_length)
+		return (0);
 	temp = (char *)malloc((BUFF_SIZE + 1) * sizeof(char));
 	if (temp == NULL)
 		return (0);
 	temp[BUFF_SIZE] = '\0';
 	fd = open(PASS_FILE, O_RDWR | O_APPEND);
-	write(fd, " ", space);
+	i = 0;
+	while (i < space)
+	{
+		write(fd, " ", 1);
+		i++;
+	}
 	close(fd);
 	file_length -= BUFF_SIZE;
-	while (file_length > 0)
+	while (file_length > cursor) 
 	{
 		fd = open(PASS_FILE, O_RDWR);
-		read(fd, temp[0], (file_length - 1));
+		i = 0;
+		while (i < file_length)
+		{
+			read(fd, &c, 1);
+			i++;
+		}
 		read(fd, temp, BUFF_SIZE);
+		close(fd);
+		fd = open(PASS_FILE, O_RDWR);
+		i = 0;
+		while (i < (space + file_length))
+		{
+			read(fd, &c, 1);
+			i++;
+		}
+		write(fd, temp, BUFF_SIZE);
+		close(fd);
 		file_length -= BUFF_SIZE;
 	}
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	read(fd, temp, (cursor - file_length));
+	close(fd);
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < space + cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	write(fd, temp, (cursor - file_length));
+	close(fd);
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	i = 0;
+	while (i < space)
+	{
+		write(fd, " ", 1);
+		i++;
+	}
+	close(fd);
+	free(temp);
+	return (1);
 }
 
 int	ft_abs(int nbr)
