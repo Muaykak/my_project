@@ -4,7 +4,7 @@
 #include <fcntl.h>
 
 #define PASS_FILE "test.txt"
-#define BUFF_SIZE 3
+#define BUFF_SIZE 1024
 
 void	ft_putstr(char *str);
 void	ft_putnbr(int nbr);
@@ -43,13 +43,17 @@ int	main(int ac, char **av)
 }
 */
 
-int	main(void)
+int	main(int ac, char **av)
 {
 	int	j;
 
-	j = add_space(1, 1);
-	if (j == 1)
-		ft_putstr("Successful\n");
+	if (ac == 3)
+	{
+		j = add_space(atoi(av[1]), atoi(av[2]));
+		if (j == 1)
+			ft_putstr("Successful\n");
+	}
+		print_data(1);
 }
 
 int	add_space(int space, int cursor)
@@ -76,7 +80,7 @@ int	add_space(int space, int cursor)
 	}
 	close(fd);
 	file_length -= BUFF_SIZE;
-	while (file_length > cursor) 
+	while (file_length >= cursor) 
 	{
 		fd = open(PASS_FILE, O_RDWR);
 		i = 0;
@@ -96,26 +100,31 @@ int	add_space(int space, int cursor)
 		}
 		write(fd, temp, BUFF_SIZE);
 		close(fd);
+		if (file_length == cursor)
+			break ;
 		file_length -= BUFF_SIZE;
 	}
-	fd = open(PASS_FILE, O_RDWR);
-	i = 0;
-	while (i < cursor)
+	if (file_length < cursor)
 	{
-		read(fd, &c, 1);
-		i++;
+		fd = open(PASS_FILE, O_RDWR);
+		i = 0;
+		while (i < cursor)
+		{
+			read(fd, &c, 1);
+			i++;
+		}
+		read(fd, temp, (BUFF_SIZE - (cursor - file_length)));
+		close(fd);
+		fd = open(PASS_FILE, O_RDWR);
+		i = 0;
+		while (i < space + cursor)
+		{
+			read(fd, &c, 1);
+			i++;
+		}
+		write(fd, temp, BUFF_SIZE - ((cursor - file_length)));
+		close(fd);
 	}
-	read(fd, temp, (cursor - file_length));
-	close(fd);
-	fd = open(PASS_FILE, O_RDWR);
-	i = 0;
-	while (i < space + cursor)
-	{
-		read(fd, &c, 1);
-		i++;
-	}
-	write(fd, temp, (cursor - file_length));
-	close(fd);
 	fd = open(PASS_FILE, O_RDWR);
 	i = 0;
 	while (i < cursor)
