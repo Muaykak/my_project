@@ -24,6 +24,11 @@ int		print_data(int linenum);
 ssize_t			file_count(void);
 int		ft_abs(int nbr);
 int		add_space(int space, int cursor);
+int		add_space_sub1(int space);
+void	add_space_sub2(int space, int *file_length, char *temp);
+void	add_space_sub2(int space, int *file_length, char *temp);
+void	add_space_sub3(int cursor, int *file_length, int space, char *temp);
+void	add_space_sub4(int cursor, int space);
 
 /*
 int	main(int ac, char **av)
@@ -75,47 +80,14 @@ int	add_space(int space, int cursor)
 	file_length -= BUFF_SIZE;
 	while (file_length >= cursor) 
 	{
-		add_space_sub2(space, &file_length, temp)
+		add_space_sub2(space, &file_length, temp);
 		if (file_length == cursor)
 			break ;
 		file_length -= BUFF_SIZE;
 	}
 	if (file_length < cursor)
-	{
-int	add_space_sub3(int cursor, int file_length, int space)
-		fd = open(PASS_FILE, O_RDWR);
-		i = 0;
-		while (i < cursor)
-		{
-			read(fd, &c, 1);
-			i++;
-		}
-		read(fd, temp, (BUFF_SIZE - (cursor - file_length)));
-		close(fd);
-		fd = open(PASS_FILE, O_RDWR);
-		i = 0;
-		while (i < space + cursor)
-		{
-			read(fd, &c, 1);
-			i++;
-		}
-		write(fd, temp, BUFF_SIZE - ((cursor - file_length)));
-		close(fd);
-	}
-	fd = open(PASS_FILE, O_RDWR);
-	i = 0;
-	while (i < cursor)
-	{
-		read(fd, &c, 1);
-		i++;
-	}
-	i = 0;
-	while (i < space)
-	{
-		write(fd, " ", 1);
-		i++;
-	}
-	close(fd);
+		add_space_sub3(cursor, &file_length, space, temp);
+	add_space_sub4(cursor, space);
 	free(temp);
 	return (1);
 }
@@ -138,7 +110,7 @@ int	add_space_sub1(int space)
 	return (1);
 }
 
-int	add_space_sub2(int space, int *file_length, char *temp)
+void	add_space_sub2(int space, int *file_length, char *temp)
 {
 	char	c;
 	int		i;
@@ -162,7 +134,54 @@ int	add_space_sub2(int space, int *file_length, char *temp)
 	}
 	write(fd, temp, BUFF_SIZE);
 	close(fd);
-	return (1);
+}
+
+void	add_space_sub3(int cursor, int *file_length, int space, char *temp)
+{
+	int		fd;
+	int		i;
+	char	c;
+
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	read(fd, temp, (BUFF_SIZE - (cursor - *file_length)));
+	close(fd);
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < space + cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	write(fd, temp, BUFF_SIZE - ((cursor - *file_length)));
+	close(fd);
+}
+
+void	add_space_sub4(int cursor, int space)
+{
+	int		fd;
+	int 		i;
+	char	c;
+
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < cursor)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	i = 0;
+	while (i < space)
+	{
+		write(fd, " ", 1);
+		i++;
+	}
+	close(fd);
 }
 int	ft_abs(int nbr)
 {
