@@ -71,41 +71,18 @@ int	add_space(int space, int cursor)
 	if (temp == NULL)
 		return (0);
 	temp[BUFF_SIZE] = '\0';
-	fd = open(PASS_FILE, O_RDWR | O_APPEND);
-	i = 0;
-	while (i < space)
-	{
-		write(fd, " ", 1);
-		i++;
-	}
-	close(fd);
+	add_space_sub1(space);
 	file_length -= BUFF_SIZE;
 	while (file_length >= cursor) 
 	{
-		fd = open(PASS_FILE, O_RDWR);
-		i = 0;
-		while (i < file_length)
-		{
-			read(fd, &c, 1);
-			i++;
-		}
-		read(fd, temp, BUFF_SIZE);
-		close(fd);
-		fd = open(PASS_FILE, O_RDWR);
-		i = 0;
-		while (i < (space + file_length))
-		{
-			read(fd, &c, 1);
-			i++;
-		}
-		write(fd, temp, BUFF_SIZE);
-		close(fd);
+		add_space_sub2(space, &file_length, temp)
 		if (file_length == cursor)
 			break ;
 		file_length -= BUFF_SIZE;
 	}
 	if (file_length < cursor)
 	{
+int	add_space_sub3(int cursor, int file_length, int space)
 		fd = open(PASS_FILE, O_RDWR);
 		i = 0;
 		while (i < cursor)
@@ -143,6 +120,50 @@ int	add_space(int space, int cursor)
 	return (1);
 }
 
+int	add_space_sub1(int space)
+{
+	int	fd;
+	int	i;
+
+	fd = open(PASS_FILE, O_RDWR | O_APPEND);
+	if (fd < 0)
+		return (0);
+	i = 0;
+	while (i < space)
+	{
+		write(fd, " ", 1);
+		i++;
+	}
+	close(fd);
+	return (1);
+}
+
+int	add_space_sub2(int space, int *file_length, char *temp)
+{
+	char	c;
+	int		i;
+	int		fd;
+
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < *file_length)
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	read(fd, temp, BUFF_SIZE);
+	close(fd);
+	fd = open(PASS_FILE, O_RDWR);
+	i = 0;
+	while (i < (space + *file_length))
+	{
+		read(fd, &c, 1);
+		i++;
+	}
+	write(fd, temp, BUFF_SIZE);
+	close(fd);
+	return (1);
+}
 int	ft_abs(int nbr)
 {
 	if (nbr < 0)
