@@ -65,9 +65,6 @@ int	add_space(int space, int cursor)
 {
 	int	file_length;
 	char	*temp;
-	int	fd;
-	char	c;
-	int	i;
 
 	file_length = file_count();
 	if (cursor < 0 || cursor > file_length)

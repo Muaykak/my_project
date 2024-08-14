@@ -1,1 +1,0 @@
-i planned this project to be a program that stores my email and pass word of each account 
