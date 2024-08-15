@@ -32,6 +32,9 @@ void	add_space_sub4(int cursor, int space);
 void	loop_line_strcount(int *line_num, int *data_num, int *b);
 char	**malloc_get_data(int data_num);
 void	free_malloc_get_data(char **data);
+int		malloc_sep_front_back(char *malloc_get, char **front, char **back);
+char	*malloc_front(char *malloc_get);
+char	*malloc_back(char *malloc_get);
 
 /*
 int	main(int ac, char **av)
@@ -55,30 +58,65 @@ int	main(int ac, char **av)
 {
 	int		j;
 	char	*save;
+	char	*front;
+	char	*back;
+
 
 	if (ac == 2)
 	{
-		print_data(atoi(av[1]));
-		return (0);
+			return (0);
 	}
 	return (1);
 }
 
-
-// separate string from malloc_get_line
-int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
+// to find that if any data match that string
+//return 0 if cannot find any data that matches
+int	find_data(char *to_find, char ***data)
 {
+	char	**save;
 
-	if (check_input_format(malloc_get) == 1)
+	if (check_input_format(to_find) == 0)
 	{
-
 	}
+}
 
+
+//Continue  ****************************************************
+//*****************
+int	find_data_noformat(char *to_find, char ***data)
+{
+	char	**temp;
+	int	data_num;
+	int	index[2];
+
+	data_num = 1;
+	temp = malloc_get_data(data_num);
+	while (temp != NULL)
+	{
+		index[0] = 0;
+		while (temp[index[0]] != NULL)
+		{
+			                                                           
+		}
+	}
+}
+// separate string from malloc_get_line
+int	malloc_sep_front_back(char *malloc_get, char **front, char **back)
+{
+	if (check_input_format(malloc_get) == 0)
+		return (0);
+	*front = malloc_front(malloc_get);
+	*back = malloc_back(malloc_get);
+	if (front == NULL || back == NULL)
+		return (0);
+	else
+		return (1);
 }
 
 char	*malloc_front(char *malloc_get)
 {
 	int	index[2];
+	char	*front;
 
 	if (malloc_get == NULL)
 		return (NULL);
@@ -101,12 +139,32 @@ char	*malloc_front(char *malloc_get)
 
 char	*malloc_back(char *malloc_get)
 {
-	int	i[3];
+	int		i[3];
+	char	*back;
 
 	if (malloc_get == NULL)
 		return (NULL);
 	i[0] = 0;
-	while (malloc_get[i[0]] != ':' )
+	while (malloc_get[i[0]] != ':' && malloc_get[i[0]] != '\0')
+		i[0]++;
+	if (malloc_get[i[0]] != '\0')
+		i[0]++;
+	while (malloc_get[i[0]] == ' ' && malloc_get[i[0]] != '\0')
+		i[0]++;
+	i[1] = 0;
+	while (malloc_get[i[1] + i[0]] != '\0')
+		i[1]++;
+	back = (char *)malloc((i[1] + 1) * sizeof(char));
+	if (back == NULL)
+		return (NULL);
+	i[2] = 0;
+	while (i[2] < i[1])
+	{
+		back[i[2]] = malloc_get[i[0] + i[2]];
+		i[2]++;
+	}
+	back[i[2]] = '\0';
+	return (&back[0]);
 }
 /*
 //this function will find the line that has matching name then return that line number
