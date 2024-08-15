@@ -64,6 +64,60 @@ int	main(int ac, char **av)
 	return (1);
 }
 
+
+// separate string from malloc_get_line
+int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
+{
+
+	if (check_input_format(malloc_get) == 1)
+	{
+
+	}
+
+}
+
+char	*malloc_front(char *malloc_get)
+{
+	int	index[2];
+
+	if (malloc_get == NULL)
+		return (NULL);
+	index[0] = 0;
+	while (malloc_get[index[0]] != ':' \
+	&& malloc_get[index[0]] != '\0')
+	index[0]++;
+	front = (char *)malloc((index[0] + 1) * sizeof(char));
+	if (front == NULL)
+		return (NULL);
+	index[1] = 0;
+	while (index[1] < index[0])
+	{
+		front[index[1]] = malloc_get[index[1]];
+		index[1]++;
+	}
+	front[index[1]] = '\0';
+	return (&front[0]);
+}
+
+char	*malloc_back(char *malloc_get)
+{
+	int	i[3];
+
+	if (malloc_get == NULL)
+		return (NULL);
+	i[0] = 0;
+	while (malloc_get[i[0]] != ':' )
+}
+/*
+//this function will find the line that has matching name then return that line number
+int	find_strcmp(char *str)
+{
+	int	line_num;
+
+	line_num = 1;
+}
+*/
+
 //print the set of desired data
 int	print_data(int data_num)
 {
@@ -365,27 +419,6 @@ ssize_t	file_count(void)
 	close (fd);
 	return (count);
 }
-
-/*
-// separate string from malloc_get_line
-int	malloc_sep_front_back(char *malloc_get, char *front, char *back)
-{
-	if (check_input_format(malloc_get) == 1)
-	{
-		
-	}
-}
-*/
-
-/*
-//this function will find the line that has matching name then return that line number
-int	find_strcmp(char *str)
-{
-	int	line_num;
-
-	line_num = 1;
-}
-*/
 
 
 //use strstr to find related names or other data by convert both string and to_find to lowercase
