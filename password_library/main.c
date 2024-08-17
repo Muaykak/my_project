@@ -35,6 +35,10 @@ void	free_malloc_get_data(char **data);
 int		malloc_sep_front_back(char *malloc_get, char **front, char **back);
 char	*malloc_front(char *malloc_get);
 char	*malloc_back(char *malloc_get);
+int	loop_check_strcmp_noformat(char ****dataset, char *to_find);
+char	*malloc_ft_strdup(char *str);
+char	**malloc_dup_data(char **data);
+int	malloc_loop_check_related_noformat(char *to_find, char ****dataset);
 
 /*
 int	main(int ac, char **av)
@@ -71,23 +75,251 @@ int	main(int ac, char **av)
 
 // to find that if any data match that string
 //return 0 if cannot find any data that matches
-int	find_data(char *to_find, char ***data)
+int	find_data(char *to_find, char ****dataset)
 {
-	char	**save;
+	char	***dataset;
 
 	if (check_input_format(to_find) == 0)
 	{
 	}
 }
 
-
-//Continue  ****************************************************
-//*****************
 int	find_data_noformat(char *to_find, char ***data)
 {
 	char	**temp;
-	int	data_num;
 	int	index[2];
+
+
+}
+
+void	free_dataset(char ***dataset)
+{
+	int	index;
+
+	if (dataset == NULL)
+		return ;
+	index = 1;
+	while (dataset[index] != NULL)
+	{
+		free_malloc_get_data(dataset[index]);
+		index++;
+	}
+	free_malloc_get_data(dataset[index]);
+	free_malloc_get_data(dataset);
+	return ;
+}
+
+//Return related result count and malloc back to sum parameter
+// 0 If cannot find any related result or failed
+int	malloc_loop_check_related_noformat(char *to_find, char ****dataset)
+{
+	int		index[1];
+	int		data_num;
+	int		count;
+	char	**temp;
+	char	*front;
+	char	*back;
+	char	***result;
+
+	data_num = 1;
+	count = 0;
+	temp = malloc_get_data(data_num);
+	while (temp != NULL)
+	{
+		index[0] = 0;
+		while (temp[index[0]] != NULL)
+		{
+			if (malloc_sep_front_back(temp[index[0]], &front, &back) == 0)
+			{
+				*dataset = NULL;
+				return (0);
+			}
+			if (check_related(back, to_find) == 1)
+				count++;
+			free(front);
+			free(back);
+			index[0]++;
+		}
+		data_num++;
+		free_malloc_get_data(temp);
+		temp = malloc_get_data(data_num);
+	}
+	if (count == 0)
+	{
+		result = NULL;
+		dataset = &result;
+		return (0);
+	}
+	result = (char ***)malloc((count + 1) * sizeof(char **));
+	if (result == NULL)
+	{
+		*dataset = NULL;
+		return (0);
+	}
+	if (temp != NULL)
+		free_malloc_get_data(temp);
+	data_num == 1;
+	count = 0;
+	temp = malloc_get_data(data_num);
+	while (temp != NULL)
+	{
+		index[0] = 0;
+		while (temp[index[0]] != NULL)
+		{
+			if (malloc_sep_front_back(temp[index[0]], &front, &back) == 0)
+			{
+				*dataset = NULL;
+				return (0);
+			}
+			if (check_related(back, to_find) == 1)
+			{
+				result[count] = malloc_dup_data(temp);
+				count++;
+			}
+			free(front);
+			free(back);
+			index[0]++;
+		}
+		data_num++;
+		free_malloc_get_data(temp);
+		temp = malloc_get_data(data_num);
+	}
+	result[count] = NULL;
+	dataset = &result;
+	return (count);
+}
+
+char	**malloc_dup_data(char **data)
+{
+	int		index[2];
+	char	**temp;
+
+	if (data == NULL)
+		return (NULL);
+	index[0] = 0;
+	while (data[index[0]] != NULL)
+		index[0]++;
+	temp = (char **)malloc((index[0] + 1) * sizeof(char *));
+	if (temp == NULL)
+		return (NULL);
+	index[1] = 0;
+	while (index[1] < index[0])
+	{
+		temp[index[1]] = malloc_ft_strdup(data[index[1]]);
+		if (temp[index[1]] == NULL)
+			return (NULL);
+		index[1]++;
+	}
+	temp[index[1]] = NULL;
+	return (temp);
+}
+
+char	*malloc_ft_strdup(char *str)
+{
+	char	*temp;
+	int		index;
+
+	if (str == NULL)
+		return (NULL);
+	temp = (char *)malloc((ft_strlen(str) + 1) * sizeof(char));
+	if (temp == NULL)
+		return (NULL);
+	index = 0;
+	while (str[index] != '\0')
+	{
+		temp[index] = str[index];
+		index++;
+	}
+	temp[index] = '\0';
+	return (temp);
+}
+
+int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
+{
+	int		index[1];
+	int		data_num;
+	int		count;
+	char	**temp;
+	char	*front;
+	char	*back;
+	char	***result;
+
+	data_num = 1;
+	count = 0;
+	temp = malloc_get_data(data_num);
+	while (temp != NULL)
+	{
+		index[0] = 0;
+		while (temp[index[0]] != NULL)
+		{
+			if (malloc_sep_front_back(temp[index[0]], &front, &back) == 0)
+			{
+				*dataset = NULL;
+				return (0);
+			}
+			if (ft_strcmp(back, to_find) == 0)
+				count++;
+			free(front);
+			free(back);
+			index[0]++;
+		}
+		data_num++;
+		free_malloc_get_data(temp);
+		temp = malloc_get_data(data_num);
+	}
+	if (count == 0)
+	{
+		result = NULL;
+		dataset = &result;
+		return (0);
+	}
+	result = (char ***)malloc((count + 1) * sizeof(char **));
+	if (result == NULL)
+	{
+		*dataset = NULL;
+		return (0);
+	}
+	if (temp != NULL)
+		free_malloc_get_data(temp);
+	data_num == 1;
+	count = 0;
+	temp = malloc_get_data(data_num);
+	while (temp != NULL)
+	{
+		index[0] = 0;
+		while (temp[index[0]] != NULL)
+		{
+			if (malloc_sep_front_back(temp[index[0]], &front, &back) == 0)
+			{
+				*dataset = NULL;
+				return (0);
+			}
+			if (ft_strcmp(back, to_find) == 0)
+			{
+				result[count] = malloc_dup_data(temp);
+				count++;
+			}
+			free(front);
+			free(back);
+			index[0]++;
+		}
+		data_num++;
+		free_malloc_get_data(temp);
+		temp = malloc_get_data(data_num);
+	}
+	result[count] = NULL;
+	dataset = &result;
+	return (count);
+}
+/*
+//this function will find the line that has matching name then return that line number
+int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
+{
+	int		index[1];
+	int		data_num;
+	char	**temp;
+	char	*front;
+	char	*back;
 
 	data_num = 1;
 	temp = malloc_get_data(data_num);
@@ -96,10 +328,36 @@ int	find_data_noformat(char *to_find, char ***data)
 		index[0] = 0;
 		while (temp[index[0]] != NULL)
 		{
-			                                                           
+			if (malloc_sep_front_back(temp[index[0]], &front, &back) == 0)
+			{
+				*data = NULL;
+				return (0);
+			}
+			if (check_related("Name", front) == 1)
+			{
+				if (ft_strcmp(back, to_find) = 0)
+				{
+					free(front);
+					free(back);
+					data = &temp;
+					return (1);
+				}
+			}
+			free(front);
+			free(back);
+			index[0]++;
 		}
+		data_num++;
+		free_malloc_get_data(temp);
+		temp = malloc_get_data(data_num);
 	}
+	if (temp == NULL)
+		*data = NULL;
+	return (0);
 }
+*/
+
+
 // separate string from malloc_get_line
 int	malloc_sep_front_back(char *malloc_get, char **front, char **back)
 {
@@ -166,15 +424,6 @@ char	*malloc_back(char *malloc_get)
 	back[i[2]] = '\0';
 	return (&back[0]);
 }
-/*
-//this function will find the line that has matching name then return that line number
-int	find_strcmp(char *str)
-{
-	int	line_num;
-
-	line_num = 1;
-}
-*/
 
 //print the set of desired data
 int	print_data(int data_num)
