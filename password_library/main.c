@@ -20,7 +20,8 @@ char	*malloc_dup_lowercase(char *str);
 int		ft_strcmp(char *s1, char *s2);
 int		check_strstr(char *str, char *to_find);
 int		check_related(char *str, char *to_find);
-int		print_data(int data_num);
+int		print_datanum(int data_num);
+int	print_data(char **data);
 ssize_t			file_count(void);
 int		ft_abs(int nbr);
 int		add_space(int space, int cursor);
@@ -35,10 +36,14 @@ void	free_malloc_get_data(char **data);
 int		malloc_sep_front_back(char *malloc_get, char **front, char **back);
 char	*malloc_front(char *malloc_get);
 char	*malloc_back(char *malloc_get);
-int	loop_check_strcmp_noformat(char ****dataset, char *to_find);
+int		loop_check_strcmp_noformat(char ****dataset, char *to_find);
 char	*malloc_ft_strdup(char *str);
 char	**malloc_dup_data(char **data);
-int	malloc_loop_check_related_noformat(char *to_find, char ****dataset);
+int		malloc_loop_check_related_noformat(char *to_find, char ****dataset);
+int		find_data_noformat(char *to_find, char ****dataset);
+int		find_data(char *to_find, char ****dataset);
+int		print_dataset(char ***dataset);
+void	free_dataset(char ***dataset);
 
 /*
 int	main(int ac, char **av)
@@ -60,15 +65,39 @@ int	main(int ac, char **av)
 
 int	main(int ac, char **av)
 {
-	int		j;
-	char	*save;
-	char	*front;
-	char	*back;
-
+	char	***dataset;
+	int	j;
 
 	if (ac == 2)
 	{
+		j = find_data(av[1], &dataset);
+		if (j == 0)
+		{
+			ft_putstr("There is no matching data from given string.\n");
 			return (0);
+		}
+		else
+		{
+			if (j > 0)
+			{
+				print_dataset(dataset);
+				ft_putstr("Showing ");
+				ft_putnbr(j);
+				ft_putstr(" matching data\n\n");
+				free_dataset(dataset);
+				return (0);
+			}
+			else if (j < 0)
+			{
+				print_dataset(dataset);
+				ft_putstr("Showing ");
+				ft_putnbr(j * -1);
+				ft_putstr(" related data\n\n");
+				free_dataset(dataset);
+				return (0);
+			}
+		}
+		return (0);
 	}
 	return (1);
 }
@@ -77,19 +106,42 @@ int	main(int ac, char **av)
 //return 0 if cannot find any data that matches
 int	find_data(char *to_find, char ****dataset)
 {
-	char	***dataset;
+	char	***temp;
+	int		j;
 
 	if (check_input_format(to_find) == 0)
 	{
+		j = find_data_noformat(to_find, &temp);
+		if (j != 0)
+		{
+			*dataset = temp;
+			return (j);
+		}
+		*dataset = NULL;
+		return (0);
 	}
+	return (0);
 }
 
-int	find_data_noformat(char *to_find, char ***data)
+int	find_data_noformat(char *to_find, char ****dataset)
 {
-	char	**temp;
-	int	index[2];
+	char	***temp;
+	int		j;
 
-
+	j = loop_check_strcmp_noformat(&temp, to_find);
+	if (j != 0)
+	{
+		*dataset = temp;
+		return (j);
+	}
+	j = malloc_loop_check_related_noformat(to_find, &temp);
+	if (j == 0)
+	{
+		*dataset = NULL;
+		return (0);
+	}
+	*dataset = temp;
+	return (-1 * j);
 }
 
 void	free_dataset(char ***dataset)
@@ -98,14 +150,13 @@ void	free_dataset(char ***dataset)
 
 	if (dataset == NULL)
 		return ;
-	index = 1;
+	index = 0;
 	while (dataset[index] != NULL)
 	{
 		free_malloc_get_data(dataset[index]);
 		index++;
 	}
-	free_malloc_get_data(dataset[index]);
-	free_malloc_get_data(dataset);
+	free(dataset);
 	return ;
 }
 
@@ -135,7 +186,12 @@ int	malloc_loop_check_related_noformat(char *to_find, char ****dataset)
 				return (0);
 			}
 			if (check_related(back, to_find) == 1)
+			{
 				count++;
+				free(front);
+				free(back);
+				break ;
+			}
 			free(front);
 			free(back);
 			index[0]++;
@@ -158,7 +214,7 @@ int	malloc_loop_check_related_noformat(char *to_find, char ****dataset)
 	}
 	if (temp != NULL)
 		free_malloc_get_data(temp);
-	data_num == 1;
+	data_num = 1;
 	count = 0;
 	temp = malloc_get_data(data_num);
 	while (temp != NULL)
@@ -175,6 +231,9 @@ int	malloc_loop_check_related_noformat(char *to_find, char ****dataset)
 			{
 				result[count] = malloc_dup_data(temp);
 				count++;
+				free(front);
+				free(back);
+				break ;
 			}
 			free(front);
 			free(back);
@@ -185,7 +244,7 @@ int	malloc_loop_check_related_noformat(char *to_find, char ****dataset)
 		temp = malloc_get_data(data_num);
 	}
 	result[count] = NULL;
-	dataset = &result;
+	*dataset = result;
 	return (count);
 }
 
@@ -258,7 +317,12 @@ int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
 				return (0);
 			}
 			if (ft_strcmp(back, to_find) == 0)
+			{
 				count++;
+				free(front);
+				free(back);
+				break ;
+			}
 			free(front);
 			free(back);
 			index[0]++;
@@ -270,7 +334,7 @@ int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
 	if (count == 0)
 	{
 		result = NULL;
-		dataset = &result;
+		dataset = NULL;
 		return (0);
 	}
 	result = (char ***)malloc((count + 1) * sizeof(char **));
@@ -281,7 +345,7 @@ int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
 	}
 	if (temp != NULL)
 		free_malloc_get_data(temp);
-	data_num == 1;
+	data_num = 1;
 	count = 0;
 	temp = malloc_get_data(data_num);
 	while (temp != NULL)
@@ -298,6 +362,9 @@ int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
 			{
 				result[count] = malloc_dup_data(temp);
 				count++;
+				free(front);
+				free(back);
+				break ;
 			}
 			free(front);
 			free(back);
@@ -308,7 +375,7 @@ int	loop_check_strcmp_noformat(char ****dataset, char *to_find)
 		temp = malloc_get_data(data_num);
 	}
 	result[count] = NULL;
-	dataset = &result;
+	*dataset = result;
 	return (count);
 }
 /*
@@ -425,8 +492,46 @@ char	*malloc_back(char *malloc_get)
 	return (&back[0]);
 }
 
+int	print_dataset(char ***dataset)
+{
+	int	index[2];
+
+
+	if (dataset == NULL)
+		return (0);
+	index[0] = 0;
+	while(dataset[index[0]] != NULL)
+	{
+		index[1] = 0;
+		while (dataset[index[0]][index[1]] != NULL)
+		{
+			ft_putstr(dataset[index[0]][index[1]]);
+			ft_putstr("\n");
+			index[1]++;
+		}
+		ft_putstr("\n");
+		index[0]++;
+	}
+	return (1);
+}
+
+int	print_data(char **data)
+{
+	int	i;
+
+	if (data == NULL)
+		return (0);
+	i = 0;
+	while (data[i] != NULL)
+	{
+		ft_putstr(data[i]);
+		ft_putstr("\n");
+		i++;
+	}
+	return (1);
+}
 //print the set of desired data
-int	print_data(int data_num)
+int	print_datanum(int data_num)
 {
 	char	**data;
 	int	i;
@@ -454,13 +559,12 @@ void	free_malloc_get_data(char **data)
 
 	if (data == NULL)
 		return ;
-	i = 1;
+	i = 0;
 	while (data[i] != NULL)
 	{
 		free(data[i]);
 		i++;
 	}
-	free(data[i]);
 	free(data);
 }
 
